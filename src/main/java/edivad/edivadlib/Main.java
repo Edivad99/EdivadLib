@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 public class Main {
 
     public static final String MODID = "edivadlib";
-    public static final String MODNAME = "Edivad Lib";
+    public static final String MODNAME = "EdivadLib";
 
     public static final Logger LOGGER = LogUtils.getLogger();
 
