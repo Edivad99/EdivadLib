@@ -1,5 +1,5 @@
 # EdivadLib
-![EdivadLib CI](https://github.com/Edivad99/ExtraStorage/workflows/ExtraStorage%20CI/badge.svg?branch=main)
+![EdivadLib CI](https://github.com/Edivad99/EdivadLib/workflows/EdivadLib%20CI/badge.svg?branch=main)
 [![CurseForge](http://cf.way2muchnoise.eu/full_410168_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/edivadlib)
 ## Table of Contents
 
