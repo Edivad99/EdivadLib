@@ -5,13 +5,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.client.IFluidTypeRenderProperties;
-import net.minecraftforge.client.RenderProperties;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,9 +39,9 @@ public class FluidUtils {
 
     @Nullable
     public static TextureAtlasSprite getFluidTexture(@NotNull FluidStack fluidStack) {
-        IFluidTypeRenderProperties properties = RenderProperties.get(fluidStack.getFluid());
-        ResourceLocation still = properties.getStillTexture(fluidStack);
-        return Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(still);
+        var extensions = IClientFluidTypeExtensions.of(fluidStack.getFluid());
+        var stillTexture = extensions.getStillTexture(fluidStack);
+        return Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stillTexture);
     }
 
     public static int getLiquidColorWithBiome(@NotNull FluidStack fluidStack, Level level, BlockPos pos) {
@@ -51,7 +49,7 @@ public class FluidUtils {
             if(fluidStack.getFluid().isSame(Fluids.WATER))
                 return BiomeColors.getAverageWaterColor(level, pos) | 0xFF000000;
 
-        return RenderProperties.get(fluidStack.getFluid()).getColorTint(fluidStack);
+        return IClientFluidTypeExtensions.of(fluidStack.getFluid()).getTintColor(fluidStack);
     }
 
     public static int getLiquidColorWithBiome(@NotNull FluidStack fluid, @NotNull BlockEntity tileEntity) {

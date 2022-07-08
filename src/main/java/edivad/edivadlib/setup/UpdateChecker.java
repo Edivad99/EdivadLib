@@ -23,7 +23,7 @@ public class UpdateChecker {
     }
 
     @SubscribeEvent
-    public void handlePlayerLoggedInEvent(ClientPlayerNetworkEvent.LoggedInEvent event) {
+    public void handlePlayerLoggedInEvent(ClientPlayerNetworkEvent.LoggingIn event) {
         try {
             var modInfo = ModList.get().getModFileById(modId).getMods().get(0);
             String qualifier = modInfo.getVersion().getQualifier();
