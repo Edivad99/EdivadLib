@@ -47,8 +47,8 @@ body:
         Example:
           - **EdivadLib version**: 1.0.0
           - **My other mod**: 1.0.0
-          - **Forge version**: 1.18.1 - 39.0.0
-          - **Minecraft version**: 1.18.1
+          - **Forge version**: 1.19.3 - 4.0.0
+          - **Minecraft version**: 1.19.3
       value: |
           - EdivadLib version:
           - My other mod:
