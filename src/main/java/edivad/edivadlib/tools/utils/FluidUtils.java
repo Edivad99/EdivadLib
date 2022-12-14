@@ -52,8 +52,8 @@ public class FluidUtils {
         return IClientFluidTypeExtensions.of(fluidStack.getFluid()).getTintColor(fluidStack);
     }
 
-    public static int getLiquidColorWithBiome(@NotNull FluidStack fluid, @NotNull BlockEntity tileEntity) {
-        return getLiquidColorWithBiome(fluid, tileEntity.getLevel(), tileEntity.getBlockPos());
+    public static int getLiquidColorWithBiome(@NotNull FluidStack fluid, @NotNull BlockEntity blockEntity) {
+        return getLiquidColorWithBiome(fluid, blockEntity.getLevel(), blockEntity.getBlockPos());
     }
 
     public static int getFluidScaled(int pixels, FluidStack fluid, int maxLiquidAmount) {
