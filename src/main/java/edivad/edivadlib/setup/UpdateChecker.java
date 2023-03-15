@@ -1,18 +1,15 @@
 package edivad.edivadlib.setup;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import edivad.edivadlib.Main;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.VersionChecker;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class UpdateChecker {
 
@@ -26,7 +23,7 @@ public class UpdateChecker {
     public void handlePlayerLoggedInEvent(ClientPlayerNetworkEvent.LoggingIn event) {
         try {
             var modInfo = ModList.get().getModFileById(modId).getMods().get(0);
-            String qualifier = modInfo.getVersion().getQualifier();
+            var qualifier = modInfo.getVersion().getQualifier();
             if(qualifier != null && qualifier.contains("NONE"))
                 return;
             var versionRAW = VersionChecker.getResult(modInfo);
@@ -34,11 +31,11 @@ public class UpdateChecker {
                 return;
 
             var status = versionRAW.status();
-            LocalPlayer player = event.getPlayer();
+            var player = event.getPlayer();
 
-            List<String> messages = new ArrayList<>();
+            var messages = new ArrayList<String>();
             if(status.equals(VersionChecker.Status.OUTDATED) && versionRAW.changes().containsKey(versionRAW.target())) {
-                String changes = versionRAW.changes().get(versionRAW.target());
+                var changes = versionRAW.changes().get(versionRAW.target());
 
                 messages.add(String.format("%s[%s]%s A new version is available (%s), please update!",
                         ChatFormatting.GREEN, modId, ChatFormatting.WHITE, versionRAW.target()));
