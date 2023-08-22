@@ -105,7 +105,7 @@ tasks.named('jar', Jar).configure {
 
 tasks.register('makeChangelog', GitChangelogTask) {
     fromRepo = projectDir.absolutePath.toString()
-    fromCommit = '04804d09c2e974caa5dda638660ad5dd8e10dfb3'
+    fromCommit = '55abadd321e6bba6b4b1152673fe46e0be84aebf'
     toRef = 'HEAD'
     file = file('CHANGELOG.md')
     untaggedName = 'Next release'
