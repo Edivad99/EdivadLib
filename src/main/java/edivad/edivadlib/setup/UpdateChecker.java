@@ -11,14 +11,15 @@ import net.minecraftforge.fml.VersionChecker;
 public record UpdateChecker(String modId) {
 
   @SubscribeEvent
-  public void handlePlayerLoggedInEvent(ClientPlayerNetworkEvent.LoggingIn event) {
+  void handlePlayerLoggedInEvent(ClientPlayerNetworkEvent.LoggingIn event) {
     var modInfo = ModList.get().getModFileById(this.modId()).getMods().get(0);
+    var modName = modInfo.getDisplayName();
     var result = VersionChecker.getResult(modInfo);
     var versionStatus = result.status();
     if (versionStatus.shouldDraw()) {
       var newVersion = result.target().toString();
       var modUrl = modInfo.getModURL().get().toString();
-      var message = Component.literal("EdivadLib: ").withStyle(ChatFormatting.GREEN)
+      var message = Component.literal(modName + ": ").withStyle(ChatFormatting.GREEN)
           .append(Component.literal(
                   String.format("A new version (%s) is available to download.", newVersion))
               .withStyle(style -> style
