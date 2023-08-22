@@ -8,7 +8,7 @@ version="${mod_version}"
 displayName="EdivadLib"
 updateJSONURL = "https://api.modrinth.com/updates/edivadlib/forge_updates.json"
 issueTrackerURL="https://github.com/Edivad99/EdivadLib/issues"
-displayURL="https://www.curseforge.com/minecraft/mc-mods/edivadlib"
+modUrl="https://www.curseforge.com/minecraft/mc-mods/edivadlib"
 authors="Edivad99"
 description="Just a common library for all my mods"
 

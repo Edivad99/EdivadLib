@@ -1,60 +1,31 @@
 package edivad.edivadlib.setup;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.stream.Collectors;
-import edivad.edivadlib.Main;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.VersionChecker;
 
-public class UpdateChecker {
+public record UpdateChecker(String modId) {
 
-    private final String modId;
-
-    public UpdateChecker(String modId) {
-        this.modId = modId;
+  @SubscribeEvent
+  public void handlePlayerLoggedInEvent(ClientPlayerNetworkEvent.LoggingIn event) {
+    var modInfo = ModList.get().getModFileById(this.modId()).getMods().get(0);
+    var result = VersionChecker.getResult(modInfo);
+    var versionStatus = result.status();
+    if (versionStatus.shouldDraw()) {
+      var newVersion = result.target().toString();
+      var modUrl = modInfo.getModURL().get().toString();
+      var message = Component.literal("EdivadLib: ").withStyle(ChatFormatting.GREEN)
+          .append(Component.literal(
+                  String.format("A new version (%s) is available to download.", newVersion))
+              .withStyle(style -> style
+                  .withColor(ChatFormatting.WHITE)
+                  .withUnderlined(true)
+                  .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, modUrl))));
+      event.getPlayer().displayClientMessage(message, false);
     }
-
-    @SubscribeEvent
-    public void handlePlayerLoggedInEvent(ClientPlayerNetworkEvent.LoggingIn event) {
-        try {
-            var modInfo = ModList.get().getModFileById(modId).getMods().get(0);
-            var qualifier = modInfo.getVersion().getQualifier();
-            if(qualifier != null && qualifier.contains("NONE"))
-                return;
-            var versionRAW = VersionChecker.getResult(modInfo);
-            if(versionRAW.target() == null)
-                return;
-
-            var status = versionRAW.status();
-            var player = event.getPlayer();
-
-            var messages = new ArrayList<String>();
-            if(status.equals(VersionChecker.Status.OUTDATED) && versionRAW.changes().containsKey(versionRAW.target())) {
-                var changes = versionRAW.changes().get(versionRAW.target());
-
-                messages.add(String.format("%s[%s]%s A new version is available (%s), please update!",
-                        ChatFormatting.GREEN, modId, ChatFormatting.WHITE, versionRAW.target()));
-                messages.add(ChatFormatting.YELLOW + "Changelog:");
-
-                Arrays.stream(changes.split("\n"))
-                        .map(change -> ChatFormatting.WHITE + "- " + change)
-                        .collect(Collectors.toCollection(() -> messages));
-                if(versionRAW.changes().size() > 1) {
-                    messages.add(ChatFormatting.WHITE + "- And more...");
-                }
-            }
-            messages.stream()
-                    .map(Component::literal)
-                    .forEach(message -> player.displayClientMessage(message, false));
-
-        }
-        catch(Exception e) {
-            Main.LOGGER.warn("Unable to check the version", e);
-        }
-    }
+  }
 }
