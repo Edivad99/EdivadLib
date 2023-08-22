@@ -13,7 +13,7 @@ plugins {
 
 version = "$minecraft_version-$mod_version"
 group = 'edivad.edivadlib'
-base.archivesName = "EdivadLib-$minecraft_version"
+base.archivesName = 'EdivadLib'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
