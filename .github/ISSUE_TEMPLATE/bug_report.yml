@@ -47,12 +47,12 @@ body:
         Example:
           - **EdivadLib version**: 1.0.0
           - **My other mod**: 1.0.0
-          - **Forge version**: 1.19.3 - 4.0.0
-          - **Minecraft version**: 1.19.3
+          - **NeoForge version**: 20.4.0
+          - **Minecraft version**: 1.20.4
       value: |
           - EdivadLib version:
           - My other mod:
-          - Forge version:
+          - NeoForge version:
           - Minecraft version:
       render: markdown
     validations:
