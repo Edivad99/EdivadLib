@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -16,21 +17,20 @@ import net.neoforged.neoforge.fluids.FluidStack;
 
 public class FluidUtils {
 
-  //Render liquid
   public static float getRed(int color) {
-    return (color >> 16 & 0xFF) / 255.0F;
+    return FastColor.ARGB32.red(color) / 255.0F;
   }
 
   public static float getGreen(int color) {
-    return (color >> 8 & 0xFF) / 255.0F;
+    return FastColor.ARGB32.green(color) / 255.0F;
   }
 
   public static float getBlue(int color) {
-    return (color & 0xFF) / 255.0F;
+    return FastColor.ARGB32.blue(color) / 255.0F;
   }
 
   public static float getAlpha(int color) {
-    return (color >> 24 & 0xFF) / 255.0F;
+    return FastColor.ARGB32.alpha(color) / 255.0F;
   }
 
   public static void color(int color) {
