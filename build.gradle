@@ -5,17 +5,29 @@ plugins {
     id 'java-library'
     id 'eclipse'
     id 'idea'
-    id 'net.neoforged.gradle.userdev' version '7.0.57'
-    id 'se.bjurr.gitchangelog.git-changelog-gradle-plugin' version '1.81.4'
-    id 'me.modmuss50.mod-publish-plugin' version '0.4.5'
+    id 'net.neoforged.gradle.userdev' version "$neo_gradle_version"
+    id 'se.bjurr.gitchangelog.git-changelog-gradle-plugin' version '2.1.0'
+    id 'me.modmuss50.mod-publish-plugin' version '0.5.0'
+    id 'com.diffplug.spotless' version '6.25.0'
+}
+
+def isRelease = System.getenv('CURSEFORGE_TOKEN')
+if (!isRelease) {
+    mod_version += '-snapshot'
 }
 
 version = "$minecraft_version-$mod_version"
 group = 'edivad.edivadlib'
 base.archivesName = 'EdivadLib'
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+        if (System.getProperty('idea.active')) {
+            vendor = JvmVendorSpec.JETBRAINS
+        }
+    }
+}
 println(repeat('*', 60))
 println("Project Version: $version")
 println("Java: ${System.getProperty('java.version')}")
@@ -27,6 +39,9 @@ runs {
     configureEach {
         systemProperty 'forge.logging.console.level', 'debug'
         modSource project.sourceSets.main
+        if (System.getProperty('idea.active')) {
+            jvmArguments.add("-XX:+AllowEnhancedClassRedefinition")
+        }
     }
 
     client {
@@ -50,9 +65,21 @@ dependencies {
     compileOnly "mcjty.theoneprobe:theoneprobe:$top_version"
 }
 
+spotless {
+  java {
+    target 'src/*/java/**/*.java'
+    importOrder('\\#', 'java|javax|org|com|')
+
+    endWithNewline()
+    trimTrailingWhitespace()
+    removeUnusedImports()
+    indentWithSpaces(2)
+  }
+}
+
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-    options.compilerArgs.addAll(["-Xmaxerrs", "100000"])
+    options.compilerArgs.addAll(['-Xmaxerrs', '100000'])
 }
 
 tasks.withType(ProcessResources).configureEach {
