@@ -3,22 +3,5 @@ name: 'EdivadLib CI'
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'adopt'
-          java-version: '17'
-
-      - name: Build
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: wrapper
-          cache-read-only: false
-          arguments: build
+  run:
+    uses: Edivad99/EdivadLib/.github/workflows/build-generic.yml@1.20.x
