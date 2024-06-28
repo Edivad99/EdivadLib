@@ -3,8 +3,9 @@ package edivad.edivadlib.compat.top;
 import java.text.DecimalFormat;
 import org.jetbrains.annotations.NotNull;
 import edivad.edivadlib.tools.utils.FluidUtils;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -27,13 +28,13 @@ public abstract class FluidElement extends TOPElement {
     this(fluid, capacity, FluidUtils.getLiquidColorWithBiome(fluid, blockentity));
   }
 
-  public FluidElement(FriendlyByteBuf buf) {
-    this(buf.readFluidStack(), buf.readInt(), buf.readInt());
+  public FluidElement(RegistryFriendlyByteBuf buf) {
+    this(FluidStack.OPTIONAL_STREAM_CODEC.decode(buf), buf.readInt(), buf.readInt());
   }
 
   @Override
-  public void toBytes(FriendlyByteBuf buf) {
-    buf.writeFluidStack(fluid);
+  public void toBytes(RegistryFriendlyByteBuf buf) {
+    FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, fluid);
     buf.writeInt(capacity);
     buf.writeInt(colorLiquid);
   }
@@ -55,15 +56,15 @@ public abstract class FluidElement extends TOPElement {
 
   @Override
   public MutableComponent getText() {
-    String liquidText = fluid.isEmpty() ? "Empty" : fluid.getDisplayName().getString();
+    String liquidText = fluid.isEmpty() ? "Empty" : fluid.getHoverName().getString();
     DecimalFormat f = new DecimalFormat("#,##0");
     int amount = fluid.getAmount();
     return Component.literal(String.format("%s: %smB", liquidText, f.format(amount)));
   }
 
   @Override
-  protected boolean applyRenderColor() {
-    FluidUtils.color(colorLiquid);
+  protected boolean applyRenderColor(GuiGraphics guiGraphics) {
+    FluidUtils.color(guiGraphics, colorLiquid);
     return true;
   }
 }

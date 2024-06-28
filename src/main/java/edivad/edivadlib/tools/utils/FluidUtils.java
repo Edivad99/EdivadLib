@@ -2,8 +2,8 @@ package edivad.edivadlib.tools.utils;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
@@ -33,8 +33,8 @@ public class FluidUtils {
     return FastColor.ARGB32.alpha(color) / 255.0F;
   }
 
-  public static void color(int color) {
-    RenderSystem.setShaderColor(getRed(color), getGreen(color), getBlue(color), getAlpha(color));
+  public static void color(GuiGraphics guiGraphics, int color) {
+    guiGraphics.setColor(getRed(color), getGreen(color), getBlue(color), getAlpha(color));
   }
 
   @Nullable

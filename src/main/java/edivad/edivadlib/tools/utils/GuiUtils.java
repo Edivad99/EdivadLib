@@ -1,25 +1,26 @@
 package edivad.edivadlib.tools.utils;
 
+import org.joml.Matrix4f;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.world.inventory.InventoryMenu;
 
 public class GuiUtils {
 
-  public static void drawTiledSprite(int xPosition, int yPosition, int yOffset,
-      int desiredWidth, int desiredHeight, TextureAtlasSprite sprite,
+  public static void drawTiledSprite(GuiGraphics guiGraphics, int xPosition, int yPosition,
+      int yOffset, int desiredWidth, int desiredHeight, TextureAtlasSprite sprite,
       int textureWidth, int textureHeight, int zLevel) {
     if (desiredWidth == 0 || desiredHeight == 0 || textureWidth == 0 || textureHeight == 0) {
       return;
     }
     RenderSystem.setShader(GameRenderer::getPositionTexShader);
-    RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
+    RenderSystem.setShaderTexture(0, sprite.atlasLocation());
 
     int xTileCount = desiredWidth / textureWidth;
     int xRemainder = desiredWidth - (xTileCount * textureWidth);
@@ -33,8 +34,9 @@ public class GuiUtils {
     float uDif = uMax - uMin;
     float vDif = vMax - vMin;
     RenderSystem.enableBlend();
-    BufferBuilder vertexBuffer = Tesselator.getInstance().getBuilder();
-    vertexBuffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+    BufferBuilder vertexBuffer = Tesselator.getInstance()
+        .begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+    Matrix4f matrix4f = guiGraphics.pose().last().pose();
     for (int xTile = 0; xTile <= xTileCount; xTile++) {
       int width = (xTile == xTileCount) ? xRemainder : textureWidth;
       if (width == 0) {
@@ -54,14 +56,17 @@ public class GuiUtils {
         int y = yStart - ((yTile + 1) * textureHeight);
         int maskTop = textureHeight - height;
         float vMaxLocal = vMax - (vDif * maskTop / textureHeight);
-        vertexBuffer.vertex(x, y + textureHeight, zLevel).uv(uMin, vMaxLocal).endVertex();
-        vertexBuffer.vertex(shiftedX, y + textureHeight, zLevel).uv(uMaxLocal, vMaxLocal)
-            .endVertex();
-        vertexBuffer.vertex(shiftedX, y + maskTop, zLevel).uv(uMaxLocal, vMin).endVertex();
-        vertexBuffer.vertex(x, y + maskTop, zLevel).uv(uMin, vMin).endVertex();
+        vertexBuffer.addVertex(matrix4f, x, y + textureHeight, zLevel)
+            .setUv(uMin, vMaxLocal);
+        vertexBuffer.addVertex(matrix4f, shiftedX, y + textureHeight, zLevel)
+            .setUv(uMaxLocal, vMaxLocal);
+        vertexBuffer.addVertex(matrix4f, shiftedX, y + maskTop, zLevel)
+            .setUv(uMaxLocal, vMin);
+        vertexBuffer.addVertex(matrix4f, x, y + maskTop, zLevel)
+            .setUv(uMin, vMin);
       }
     }
-    BufferUploader.drawWithShader(vertexBuffer.end());
+    BufferUploader.drawWithShader(vertexBuffer.buildOrThrow());
     RenderSystem.disableBlend();
   }
 }

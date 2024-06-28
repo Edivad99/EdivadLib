@@ -1,7 +1,6 @@
 package edivad.edivadlib.compat.top;
 
 import org.jetbrains.annotations.Nullable;
-import com.mojang.blaze3d.systems.RenderSystem;
 import edivad.edivadlib.tools.utils.GuiUtils;
 import mcjty.theoneprobe.api.IElement;
 import net.minecraft.client.Minecraft;
@@ -21,8 +20,7 @@ public abstract class TOPElement implements IElement {
   }
 
   protected static void renderScaledText(GuiGraphics guiGraphics, Font font, int x, int y,
-      int color,
-      int maxWidth, MutableComponent component) {
+      int color, int maxWidth, MutableComponent component) {
     String text = component.getString();
     int length = font.width(text);
     if (length <= maxWidth) {
@@ -38,7 +36,7 @@ public abstract class TOPElement implements IElement {
       poseStack.popPose();
     }
     //Make sure the color does not leak from having drawn the string
-    RenderSystem.setShaderColor(1, 1, 1, 1);
+    guiGraphics.setColor(1, 1, 1, 1);
   }
 
   @Override
@@ -53,10 +51,11 @@ public abstract class TOPElement implements IElement {
     if (icon != null) {
       int scale = getScaledLevel(width - 2);
       if (scale > 0) {
-        boolean colored = applyRenderColor();
-        GuiUtils.drawTiledSprite(x + 1, y + 1, height - 2, scale, height - 2, icon, 16, 16, 0);
+        boolean colored = applyRenderColor(guiGraphics);
+        GuiUtils.drawTiledSprite(guiGraphics, x + 1, y + 1, height - 2, scale, height - 2, icon,
+            16, 16, 0);
         if (colored) {
-          RenderSystem.setShaderColor(1, 1, 1, 1);
+          guiGraphics.setColor(1, 1, 1, 1);
         }
       }
     }
@@ -81,7 +80,7 @@ public abstract class TOPElement implements IElement {
 
   public abstract MutableComponent getText();
 
-  protected boolean applyRenderColor() {
+  protected boolean applyRenderColor(GuiGraphics guiGraphics) {
     return false;
   }
 }
