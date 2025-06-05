@@ -6,8 +6,8 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'net.neoforged.gradle.userdev' version "$neo_gradle_version"
-    id 'se.bjurr.gitchangelog.git-changelog-gradle-plugin' version '2.1.2'
-    id 'me.modmuss50.mod-publish-plugin' version '0.5.1'
+    id 'se.bjurr.gitchangelog.git-changelog-gradle-plugin' version '3.0.6'
+    id 'me.modmuss50.mod-publish-plugin' version '0.8.3'
     id 'com.diffplug.spotless' version '6.25.0'
 }
 
@@ -48,14 +48,14 @@ runs {
     }
 
     server {
-        programArgument '--nogui'
+        arguments '--nogui'
     }
 }
 
 repositories {
     maven {
-        name 'TOP'
-        url 'https://maven.k-4u.nl'
+        name = 'TOP'
+        url = 'https://maven.k-4u.nl'
     }
 }
 
@@ -79,6 +79,14 @@ spotless {
 
 tasks.withType(JavaCompile).configureEach {
     options.compilerArgs.addAll(['-Xmaxerrs', '100000'])
+    options.encoding = 'UTF-8'
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
 }
 
 tasks.withType(ProcessResources).configureEach {
@@ -111,26 +119,21 @@ tasks.named('jar', Jar).configure {
     }
 }
 
-def penultimateTag = { ->
-    def stdout = new ByteArrayOutputStream()
-    try {
-        project.exec { ExecSpec spec ->
-            spec.commandLine('git', 'describe', '--abbrev=0', '--tags', 'HEAD~').standardOutput(stdout)
-        }.assertNormalExitValue().rethrowFailure()
-    } catch (Exception e) {
-        throw new IllegalStateException("Failed to get the tag; check if 'git' is on the PATH", e)
+def penultimateTag = {
+    def gitVersionProvider = providers.exec {
+        commandLine 'git', 'describe', '--abbrev=0', '--tags', 'HEAD~'
     }
-    return stdout.toString()
+    gitVersionProvider.standardOutput.asText.get().trim()
 }
 
 tasks.register('makeChangelog', GitChangelogTask) {
-    fromRepo = projectDir.absolutePath.toString()
-    fromRevision = penultimateTag()
-    toRevision = 'HEAD'
-    file = file('CHANGELOG.md')
-    untaggedName = 'Next release'
-    templateContent = file('changelog.mustache').text
-    ignoreCommitsIfMessageMatches = '^.*Merge branch.*$'
+    fromRepo.set(projectDir.absolutePath.toString())
+    fromRevision.set(penultimateTag())
+    toRevision.set('HEAD')
+    file.set(file('CHANGELOG.md'))
+    untaggedName.set('Next release')
+    templateContent.set(file('changelog.mustache').text)
+    ignoreCommitsIfMessageMatches.set('^.*Merge branch.*$')
 }
 
 publishMods {

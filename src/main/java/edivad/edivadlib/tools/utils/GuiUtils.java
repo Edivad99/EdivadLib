@@ -1,14 +1,9 @@
 package edivad.edivadlib.tools.utils;
 
 import org.joml.Matrix4f;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 
 public class GuiUtils {
@@ -19,8 +14,8 @@ public class GuiUtils {
     if (desiredWidth == 0 || desiredHeight == 0 || textureWidth == 0 || textureHeight == 0) {
       return;
     }
-    RenderSystem.setShader(GameRenderer::getPositionTexShader);
-    RenderSystem.setShaderTexture(0, sprite.atlasLocation());
+    var renderType = RenderType.guiTextured(sprite.atlasLocation());
+    var vertexBuffer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(renderType);
 
     int xTileCount = desiredWidth / textureWidth;
     int xRemainder = desiredWidth - (xTileCount * textureWidth);
@@ -33,9 +28,6 @@ public class GuiUtils {
     float vMax = sprite.getV1();
     float uDif = uMax - uMin;
     float vDif = vMax - vMin;
-    RenderSystem.enableBlend();
-    BufferBuilder vertexBuffer = Tesselator.getInstance()
-        .begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
     Matrix4f matrix4f = guiGraphics.pose().last().pose();
     for (int xTile = 0; xTile <= xTileCount; xTile++) {
       int width = (xTile == xTileCount) ? xRemainder : textureWidth;
@@ -57,16 +49,18 @@ public class GuiUtils {
         int maskTop = textureHeight - height;
         float vMaxLocal = vMax - (vDif * maskTop / textureHeight);
         vertexBuffer.addVertex(matrix4f, x, y + textureHeight, zLevel)
+            .setColor(255, 255, 255, 255)
             .setUv(uMin, vMaxLocal);
         vertexBuffer.addVertex(matrix4f, shiftedX, y + textureHeight, zLevel)
+            .setColor(255, 255, 255, 255)
             .setUv(uMaxLocal, vMaxLocal);
         vertexBuffer.addVertex(matrix4f, shiftedX, y + maskTop, zLevel)
+            .setColor(255, 255, 255, 255)
             .setUv(uMaxLocal, vMin);
         vertexBuffer.addVertex(matrix4f, x, y + maskTop, zLevel)
+            .setColor(255, 255, 255, 255)
             .setUv(uMin, vMin);
       }
     }
-    BufferUploader.drawWithShader(vertexBuffer.buildOrThrow());
-    RenderSystem.disableBlend();
   }
 }

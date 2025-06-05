@@ -35,8 +35,9 @@ public abstract class TOPElement implements IElement {
       guiGraphics.drawString(font, text, (int) (x * reverse), (int) ((y * reverse) + yAdd), color);
       poseStack.popPose();
     }
+    //TODO: Fix this
     //Make sure the color does not leak from having drawn the string
-    guiGraphics.setColor(1, 1, 1, 1);
+    //guiGraphics.setColor(1, 1, 1, 1);
   }
 
   @Override
@@ -55,7 +56,8 @@ public abstract class TOPElement implements IElement {
         GuiUtils.drawTiledSprite(guiGraphics, x + 1, y + 1, height - 2, scale, height - 2, icon,
             16, 16, 0);
         if (colored) {
-          guiGraphics.setColor(1, 1, 1, 1);
+          //TODO: Fix this
+          //guiGraphics.setColor(1, 1, 1, 1);
         }
       }
     }

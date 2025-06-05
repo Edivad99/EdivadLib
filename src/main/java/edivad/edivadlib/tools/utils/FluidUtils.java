@@ -1,14 +1,15 @@
 package edivad.edivadlib.tools.utils;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.FastColor;
-import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluids;
@@ -18,30 +19,31 @@ import net.neoforged.neoforge.fluids.FluidStack;
 public class FluidUtils {
 
   public static float getRed(int color) {
-    return FastColor.ARGB32.red(color) / 255.0F;
+    return ARGB.red(color) / 255.0F;
   }
 
   public static float getGreen(int color) {
-    return FastColor.ARGB32.green(color) / 255.0F;
+    return ARGB.green(color) / 255.0F;
   }
 
   public static float getBlue(int color) {
-    return FastColor.ARGB32.blue(color) / 255.0F;
+    return ARGB.blue(color) / 255.0F;
   }
 
   public static float getAlpha(int color) {
-    return FastColor.ARGB32.alpha(color) / 255.0F;
+    return ARGB.alpha(color) / 255.0F;
   }
 
   public static void color(GuiGraphics guiGraphics, int color) {
-    guiGraphics.setColor(getRed(color), getGreen(color), getBlue(color), getAlpha(color));
+    throw new NotImplementedException();
+    //guiGraphics.setColor(getRed(color), getGreen(color), getBlue(color), getAlpha(color));
   }
 
   @Nullable
   public static TextureAtlasSprite getFluidTexture(@NotNull FluidStack fluidStack) {
     var extensions = IClientFluidTypeExtensions.of(fluidStack.getFluid());
     var stillTexture = extensions.getStillTexture(fluidStack);
-    return Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stillTexture);
+    return Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(stillTexture);
   }
 
   public static int getLiquidColorWithBiome(@NotNull FluidStack fluidStack, Level level,

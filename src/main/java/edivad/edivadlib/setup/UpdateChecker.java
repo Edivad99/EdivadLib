@@ -1,5 +1,6 @@
 package edivad.edivadlib.setup;
 
+import java.net.URI;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -25,7 +26,7 @@ public record UpdateChecker(String modId) {
               .withStyle(style -> style
                   .withColor(ChatFormatting.WHITE)
                   .withUnderlined(true)
-                  .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, modUrl))));
+                  .withClickEvent(new ClickEvent.OpenUrl(URI.create(modUrl)))));
       event.getPlayer().displayClientMessage(message, false);
     }
   }
