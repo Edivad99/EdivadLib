@@ -5,8 +5,8 @@ plugins {
     id 'java-library'
     id 'eclipse'
     id 'idea'
-    id 'net.neoforged.gradle.userdev' version "$neo_gradle_version"
-    id 'se.bjurr.gitchangelog.git-changelog-gradle-plugin' version '3.0.6'
+    id 'net.neoforged.moddev' version "$mod_dev_gradle"
+    id 'se.bjurr.gitchangelog.git-changelog-gradle-plugin' version '3.0.7'
     id 'me.modmuss50.mod-publish-plugin' version '0.8.4'
     id 'com.diffplug.spotless' version '6.25.0'
 }
@@ -35,21 +35,48 @@ println("JVM: ${System.getProperty('java.vm.version')} (${System.getProperty('ja
 println("Arch: ${System.getProperty('os.arch')}")
 println(repeat('*', 60))
 
-runs {
-    configureEach {
-        systemProperty 'forge.logging.console.level', 'debug'
-        modSource project.sourceSets.main
-        if (System.getProperty('idea.active')) {
-            jvmArguments.add("-XX:+AllowEnhancedClassRedefinition")
+neoForge {
+    version = project.neo_version
+
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
+    }
+
+    validateAccessTransformers = true
+
+    runs {
+        configureEach {
+            logLevel = org.slf4j.event.Level.DEBUG
+
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'edivadlib'
+
+            if (System.getProperty('idea.active')) {
+                jvmArguments.add("-XX:+AllowEnhancedClassRedefinition")
+            }
+        }
+
+        client {
+            client()
+            gameDirectory = project.file('runs/client')
+        }
+
+        server {
+            server()
+            gameDirectory = project.file('runs/server')
+            programArgument '--nogui'
         }
     }
 
-    client {
+    mods {
+        edivadlib {
+            sourceSet(sourceSets.main)
+        }
     }
+}
 
-    server {
-        arguments '--nogui'
-    }
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
 }
 
 repositories {
@@ -60,8 +87,6 @@ repositories {
 }
 
 dependencies {
-    implementation "net.neoforged:neoforge:$neo_version"
-
     compileOnly "mcjty.theoneprobe:theoneprobe:$top_version"
 }
 
@@ -105,6 +130,16 @@ tasks.withType(ProcessResources).configureEach {
     }
 }
 
+def lastCommit = providers.exec {
+    commandLine 'git', 'rev-parse', 'HEAD'
+}.standardOutput.asText.get().trim()
+
+def penultimateTag = () -> {
+    providers.exec {
+        commandLine 'git', 'describe', '--abbrev=0', '--tags', 'HEAD~'
+    }.standardOutput.asText.get().trim()
+}
+
 tasks.named('jar', Jar).configure {
     manifest {
         attributes([
@@ -114,16 +149,9 @@ tasks.named('jar', Jar).configure {
             'Implementation-Title'    : 'edivadlib',
             'Implementation-Version'  : project.version,
             'Implementation-Vendor'   : 'Edivad99',
-            'Implementation-Commit'   : 'git rev-parse HEAD'.execute().text.trim(),
+            'Implementation-Commit'   : lastCommit,
         ])
     }
-}
-
-def penultimateTag = {
-    def gitVersionProvider = providers.exec {
-        commandLine 'git', 'describe', '--abbrev=0', '--tags', 'HEAD~'
-    }
-    gitVersionProvider.standardOutput.asText.get().trim()
 }
 
 tasks.register('makeChangelog', GitChangelogTask) {

@@ -1,7 +1,6 @@
 package edivad.edivadlib.compat.top;
 
 import org.jetbrains.annotations.Nullable;
-import edivad.edivadlib.tools.utils.GuiUtils;
 import mcjty.theoneprobe.api.IElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -30,10 +29,10 @@ public abstract class TOPElement implements IElement {
       float reverse = 1 / scale;
       float yAdd = 4 - (scale * 8) / 2F;
       var poseStack = guiGraphics.pose();
-      poseStack.pushPose();
-      poseStack.scale(scale, scale, scale);
+      poseStack.pushMatrix();
+      poseStack.scale(scale, scale, poseStack);
       guiGraphics.drawString(font, text, (int) (x * reverse), (int) ((y * reverse) + yAdd), color);
-      poseStack.popPose();
+      poseStack.popMatrix();
     }
     //TODO: Fix this
     //Make sure the color does not leak from having drawn the string
@@ -53,8 +52,17 @@ public abstract class TOPElement implements IElement {
       int scale = getScaledLevel(width - 2);
       if (scale > 0) {
         boolean colored = applyRenderColor(guiGraphics);
-        GuiUtils.drawTiledSprite(guiGraphics, x + 1, y + 1, height - 2, scale, height - 2, icon,
-            16, 16, 0);
+        // TODO: Fix when the TOP will be release for version above 1.21.1
+        /*GuiUtils.drawTiledSprite(guiGraphics,
+            x + 1,
+            y + 1,
+            height - 2,
+            scale,
+            height - 2,
+            icon,
+            16,
+            16,
+            0);*/
         if (colored) {
           //TODO: Fix this
           //guiGraphics.setColor(1, 1, 1, 1);
