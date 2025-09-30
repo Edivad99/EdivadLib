@@ -2,7 +2,6 @@ package edivad.edivadlib.tools.utils;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.BiomeColors;
@@ -39,16 +38,15 @@ public class FluidUtils {
     //guiGraphics.setColor(getRed(color), getGreen(color), getBlue(color), getAlpha(color));
   }
 
-  @Nullable
   public static TextureAtlasSprite getFluidTexture(@NotNull FluidStack fluidStack) {
     var extensions = IClientFluidTypeExtensions.of(fluidStack.getFluid());
     var stillTexture = extensions.getStillTexture(fluidStack);
-    return Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(stillTexture);
+    return Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS).getSprite(stillTexture);
   }
 
   public static int getLiquidColorWithBiome(@NotNull FluidStack fluidStack, Level level,
       BlockPos pos) {
-    if (level.isClientSide) {
+    if (level.isClientSide()) {
       if (fluidStack.getFluid().isSame(Fluids.WATER)) {
         return BiomeColors.getAverageWaterColor(level, pos) | 0xFF000000;
       }
