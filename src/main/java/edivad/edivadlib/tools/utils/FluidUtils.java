@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
+import net.minecraft.data.AtlasIds;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -41,7 +42,7 @@ public class FluidUtils {
   public static TextureAtlasSprite getFluidTexture(@NotNull FluidStack fluidStack) {
     var extensions = IClientFluidTypeExtensions.of(fluidStack.getFluid());
     var stillTexture = extensions.getStillTexture(fluidStack);
-    return Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS).getSprite(stillTexture);
+    return Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.BLOCKS).getSprite(stillTexture);
   }
 
   public static int getLiquidColorWithBiome(@NotNull FluidStack fluidStack, Level level,
