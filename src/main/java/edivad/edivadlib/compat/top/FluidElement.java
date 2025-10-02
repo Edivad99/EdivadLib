@@ -1,7 +1,7 @@
 package edivad.edivadlib.compat.top;
 
 import java.text.DecimalFormat;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import edivad.edivadlib.tools.utils.FluidUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -17,14 +17,14 @@ public abstract class FluidElement extends TOPElement {
   protected final int capacity;
   protected final int colorLiquid;
 
-  protected FluidElement(@NotNull FluidStack fluid, int capacity, int colorLiquid) {
+  protected FluidElement(FluidStack fluid, int capacity, int colorLiquid) {
     super(0xFF000000, 0xFFFFFF);
     this.fluid = fluid;
     this.capacity = capacity;
     this.colorLiquid = colorLiquid;
   }
 
-  public FluidElement(@NotNull FluidStack fluid, int capacity, BlockEntity blockentity) {
+  public FluidElement(FluidStack fluid, int capacity, BlockEntity blockentity) {
     this(fluid, capacity, FluidUtils.getLiquidColorWithBiome(fluid, blockentity));
   }
 
@@ -49,6 +49,7 @@ public abstract class FluidElement extends TOPElement {
     return (int) result;
   }
 
+  @Nullable
   @Override
   public TextureAtlasSprite getIcon() {
     return fluid.isEmpty() ? null : FluidUtils.getFluidTexture(fluid);

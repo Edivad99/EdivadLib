@@ -1,11 +1,10 @@
 package edivad.edivadlib.tools.utils;
 
+import java.util.Objects;
 import org.apache.commons.lang3.NotImplementedException;
-import org.jetbrains.annotations.NotNull;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.BiomeColors;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.data.AtlasIds;
@@ -39,13 +38,13 @@ public class FluidUtils {
     //guiGraphics.setColor(getRed(color), getGreen(color), getBlue(color), getAlpha(color));
   }
 
-  public static TextureAtlasSprite getFluidTexture(@NotNull FluidStack fluidStack) {
+  public static TextureAtlasSprite getFluidTexture(FluidStack fluidStack) {
     var extensions = IClientFluidTypeExtensions.of(fluidStack.getFluid());
     var stillTexture = extensions.getStillTexture(fluidStack);
     return Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.BLOCKS).getSprite(stillTexture);
   }
 
-  public static int getLiquidColorWithBiome(@NotNull FluidStack fluidStack, Level level,
+  public static int getLiquidColorWithBiome(FluidStack fluidStack, Level level,
       BlockPos pos) {
     if (level.isClientSide()) {
       if (fluidStack.getFluid().isSame(Fluids.WATER)) {
@@ -56,9 +55,9 @@ public class FluidUtils {
     return IClientFluidTypeExtensions.of(fluidStack.getFluid()).getTintColor(fluidStack);
   }
 
-  public static int getLiquidColorWithBiome(@NotNull FluidStack fluid,
-      @NotNull BlockEntity blockEntity) {
-    return getLiquidColorWithBiome(fluid, blockEntity.getLevel(), blockEntity.getBlockPos());
+  public static int getLiquidColorWithBiome(FluidStack fluid,
+      BlockEntity blockEntity) {
+    return getLiquidColorWithBiome(fluid, Objects.requireNonNull(blockEntity.getLevel()), blockEntity.getBlockPos());
   }
 
   public static int getFluidScaled(int pixels, FluidStack fluid, int maxLiquidAmount) {
