@@ -1,6 +1,6 @@
 package edivad.edivadlib.compat.top;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import mcjty.theoneprobe.api.IElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

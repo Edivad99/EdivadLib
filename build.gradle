@@ -8,8 +8,8 @@ plugins {
     id 'idea'
     id 'net.neoforged.moddev' version "$mod_dev_gradle"
     id 'se.bjurr.gitchangelog.git-changelog-gradle-plugin' version '3.1.1'
-    id 'me.modmuss50.mod-publish-plugin' version '1.0.0'
-    id 'com.diffplug.spotless' version '6.25.0'
+    id 'me.modmuss50.mod-publish-plugin' version '1.1.0'
+    id 'com.diffplug.spotless' version '8.1.0'
 }
 
 def isRelease = System.getenv('CURSEFORGE_TOKEN')
@@ -37,7 +37,10 @@ println("Arch: ${System.getProperty('os.arch')}")
 println(repeat('*', 60))
 
 neoForge {
-    version = project.neo_version
+    enable {
+        version = project.neo_version
+        disableRecompilation = System.getenv("CI") == "true"
+    }
 
     parchment {
         mappingsVersion = project.parchment_mappings_version
@@ -99,7 +102,7 @@ spotless {
     endWithNewline()
     trimTrailingWhitespace()
     removeUnusedImports()
-    indentWithSpaces(2)
+    leadingTabsToSpaces(2)
   }
 }
 
@@ -119,14 +122,10 @@ tasks.register('generatePackageInfos') {
         pkgName = pkgName.replaceAll('/', '.')
 
         def pkgInfoText = """
-            |@FieldsAreNonnullByDefault
-            |@MethodsReturnNonnullByDefault
-            |@ParametersAreNonnullByDefault
+            |@NullMarked
             |package $pkgName;
             |
-            |import javax.annotation.ParametersAreNonnullByDefault;
-            |import net.minecraft.FieldsAreNonnullByDefault;
-            |import net.minecraft.MethodsReturnNonnullByDefault;
+            |import org.jspecify.annotations.NullMarked;
         """.stripMargin().trim()
 
         packageInfoFile.text = pkgInfoText
@@ -147,7 +146,7 @@ idea {
     }
 }
 
-tasks.withType(ProcessResources).configureEach {
+var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
     var replaceProperties = [
         minecraft_version       : minecraft_version,
         minecraft_version_range : minecraft_version_range,
@@ -157,11 +156,12 @@ tasks.withType(ProcessResources).configureEach {
         mod_version             : mod_version,
     ]
     inputs.properties replaceProperties
-
-    filesMatching(['META-INF/neoforge.mods.toml']) {
-        expand replaceProperties
-    }
+    expand replaceProperties
+    from "src/main/templates"
+    into "build/generated/sources/modMetadata"
 }
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata
 
 def lastCommit = providers.exec {
     commandLine 'git', 'rev-parse', 'HEAD'

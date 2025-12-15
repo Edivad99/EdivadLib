@@ -1,7 +1,7 @@
 package edivad.edivadlib.compat.top;
 
 import java.text.DecimalFormat;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import edivad.edivadlib.tools.utils.FluidUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

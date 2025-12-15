@@ -13,7 +13,7 @@ public record UpdateChecker(String modId) {
 
   @SubscribeEvent
   void handlePlayerLoggedInEvent(ClientPlayerNetworkEvent.LoggingIn event) {
-    var modInfo = ModList.get().getModFileById(this.modId()).getMods().get(0);
+    var modInfo = ModList.get().getModFileById(this.modId()).getMods().getFirst();
     var modName = modInfo.getDisplayName();
     var result = VersionChecker.getResult(modInfo);
     var versionStatus = result.status();
