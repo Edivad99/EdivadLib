@@ -27,7 +27,7 @@ public record UpdateChecker(String modId) {
                   .withColor(ChatFormatting.WHITE)
                   .withUnderlined(true)
                   .withClickEvent(new ClickEvent.OpenUrl(URI.create(modUrl)))));
-      event.getPlayer().displayClientMessage(message, false);
+      event.getPlayer().sendSystemMessage(message);
     }
   }
 }
