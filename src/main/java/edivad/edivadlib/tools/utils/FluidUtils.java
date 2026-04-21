@@ -54,7 +54,11 @@ public class FluidUtils {
         .getModelManager()
         .getFluidStateModelSet()
         .get(fluidStack.getFluid().defaultFluidState());
-    return fluidModel.fluidTintSource().colorAsStack(fluidStack);
+    var tintSource = fluidModel.fluidTintSource();
+    if (tintSource == null) {
+      return -1;
+    }
+    return tintSource.colorAsStack(fluidStack);
   }
 
   public static int getLiquidColorWithBiome(FluidStack fluid,
